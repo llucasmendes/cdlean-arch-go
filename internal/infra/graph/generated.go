@@ -13,7 +13,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
-	"github.com/wesleybruno/desafio-clean-arch/internal/infra/graph/model"
+	"github.com/llucasmendes/dcdlean-arch-go/internal/infra/graph/model"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
 )

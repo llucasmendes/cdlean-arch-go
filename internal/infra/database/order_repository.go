@@ -3,7 +3,7 @@ package database
 import (
 	"database/sql"
 
-	"github.com/wesleybruno/desafio-clean-arch/internal/entity"
+	"github.com/llucasmendes/dcdlean-arch-go/internal/entity"
 )
 
 type OrderRepository struct {

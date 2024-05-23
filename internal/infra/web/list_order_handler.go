@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/wesleybruno/desafio-clean-arch/internal/entity"
-	"github.com/wesleybruno/desafio-clean-arch/internal/usecase"
+	"github.com/llucasmendes/dcdlean-arch-go/internal/entity"
+	"github.com/llucasmendes/dcdlean-arch-go/internal/usecase"
 )
 
 type WebListOrderHandler struct {

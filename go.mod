@@ -12,7 +12,6 @@ require (
 	github.com/streadway/amqp v1.0.0
 	github.com/stretchr/testify v1.8.1
 	github.com/vektah/gqlparser/v2 v2.5.1
-	github.com/wesleybruno/desafio-clean-arch v0.0.0-20230901162819-d8ee6c282386
 	google.golang.org/grpc v1.50.1
 	google.golang.org/protobuf v1.28.1
 )

@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/wesleybruno/desafio-clean-arch/internal/entity"
-	"github.com/wesleybruno/desafio-clean-arch/internal/usecase"
-	"github.com/wesleybruno/desafio-clean-arch/pkg/events"
+	"github.com/llucasmendes/dcdlean-arch-go/internal/entity"
+	"github.com/llucasmendes/dcdlean-arch-go/internal/usecase"
+	"github.com/llucasmendes/dcdlean-arch-go/pkg/events"
 )
 
 type WebCreateOrderHandler struct {

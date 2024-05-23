@@ -1,6 +1,6 @@
 package graph
 
-import "github.com/wesleybruno/desafio-clean-arch/internal/usecase"
+import "github.com/llucasmendes/dcdlean-arch-go/internal/usecase"
 
 // This file will not be regenerated automatically.
 //

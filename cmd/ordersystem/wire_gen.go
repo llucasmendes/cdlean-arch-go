@@ -9,11 +9,11 @@ package main
 import (
 	"database/sql"
 	"github.com/google/wire"
-	"github.com/wesleybruno/desafio-clean-arch/internal/entity"
-	"github.com/wesleybruno/desafio-clean-arch/internal/event"
-	"github.com/wesleybruno/desafio-clean-arch/internal/infra/database"
-	"github.com/wesleybruno/desafio-clean-arch/internal/usecase"
-	"github.com/wesleybruno/desafio-clean-arch/pkg/events"
+	"github.com/llucasmendes/dcdlean-arch-go/internal/entity"
+	"github.com/llucasmendes/dcdlean-arch-go/internal/event"
+	"github.com/llucasmendes/dcdlean-arch-go/internal/infra/database"
+	"github.com/llucasmendes/dcdlean-arch-go/internal/usecase"
+	"github.com/llucasmendes/dcdlean-arch-go/pkg/events"
 )
 
 import (

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/llucasmendes/dcdlean-arch-go/pkg/events"
 	"github.com/streadway/amqp"
-	"github.com/wesleybruno/desafio-clean-arch/pkg/events"
 )
 
 type ActionEventHandler struct {

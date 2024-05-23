@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 
-	"github.com/wesleybruno/desafio-clean-arch/internal/infra/grpc/pb"
-	"github.com/wesleybruno/desafio-clean-arch/internal/usecase"
+	"github.com/llucasmendes/dcdlean-arch-go/internal/infra/grpc/pb"
+	"github.com/llucasmendes/dcdlean-arch-go/internal/usecase"
 )
 
 type OrderService struct {

@@ -1,7 +1,7 @@
 package usecase
 
 import (
-	"github.com/wesleybruno/desafio-clean-arch/internal/entity"
+	"github.com/llucasmendes/dcdlean-arch-go/internal/entity"
 )
 
 type ListOrderUseCase struct {
