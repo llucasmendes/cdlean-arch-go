@@ -5,10 +5,12 @@ package main
 
 import (
 	"database/sql"
+
 	"github.com/google/wire"
 	"github.com/llucasmendes/dcdlean-arch-go/internal/entity"
 	"github.com/llucasmendes/dcdlean-arch-go/internal/event"
 	"github.com/llucasmendes/dcdlean-arch-go/internal/infra/database"
+	"github.com/llucasmendes/dcdlean-arch-go/internal/infra/web"
 	"github.com/llucasmendes/dcdlean-arch-go/internal/usecase"
 	"github.com/llucasmendes/dcdlean-arch-go/pkg/events"
 )
@@ -18,24 +20,40 @@ var setOrderRepositoryDependency = wire.NewSet(
 	wire.Bind(new(entity.OrderRepositoryInterface), new(*database.OrderRepository)),
 )
 
-var setActionEvent = wire.NewSet(
-	event.NewOrderCreatedActionEvent,
-	wire.Bind(new(events.EventInterface), new(*event.ActionEvent)),
+var setEventDispatcherDependency = wire.NewSet(
+	events.NewEventDispatcher,
+	event.NewOrderCreated,
+	wire.Bind(new(events.EventInterface), new(*event.OrderCreated)),
+	wire.Bind(new(events.EventDispatcherInterface), new(*events.EventDispatcher)),
 )
 
-func NewListOrderUseCase(db *sql.DB) *usecase.ListOrderUseCase {
-	wire.Build(
-		setOrderRepositoryDependency,
-		usecase.NewListOrderUseCase,
-	)
-	return &usecase.ListOrderUseCase{}
-}
+var setOrderCreatedEvent = wire.NewSet(
+	event.NewOrderCreated,
+	wire.Bind(new(events.EventInterface), new(*event.OrderCreated)),
+)
 
 func NewCreateOrderUseCase(db *sql.DB, eventDispatcher events.EventDispatcherInterface) *usecase.CreateOrderUseCase {
 	wire.Build(
 		setOrderRepositoryDependency,
-		setActionEvent,
+		setOrderCreatedEvent,
 		usecase.NewCreateOrderUseCase,
 	)
 	return &usecase.CreateOrderUseCase{}
+}
+
+func NewListOrdersUseCase(db *sql.DB) *usecase.ListOrdersUseCase {
+	wire.Build(
+		setOrderRepositoryDependency,
+		usecase.NewListOrdersUseCase,
+	)
+	return &usecase.ListOrdersUseCase{}
+}
+
+func NewWebOrderHandler(db *sql.DB, eventDispatcher events.EventDispatcherInterface) *web.WebOrderHandler {
+	wire.Build(
+		setOrderRepositoryDependency,
+		setOrderCreatedEvent,
+		web.NewWebOrderHandler,
+	)
+	return &web.WebOrderHandler{}
 }

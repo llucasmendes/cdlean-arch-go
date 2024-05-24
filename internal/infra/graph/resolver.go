@@ -8,4 +8,5 @@ import "github.com/llucasmendes/dcdlean-arch-go/internal/usecase"
 
 type Resolver struct {
 	CreateOrderUseCase usecase.CreateOrderUseCase
+	ListOrdersUsecase  usecase.ListOrdersUseCase
 }

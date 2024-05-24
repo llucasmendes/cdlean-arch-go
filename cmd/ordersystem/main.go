@@ -9,14 +9,11 @@ import (
 	graphql_handler "github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/llucasmendes/dcdlean-arch-go/configs"
-	"github.com/llucasmendes/dcdlean-arch-go/internal/event"
 	"github.com/llucasmendes/dcdlean-arch-go/internal/event/handler"
-	"github.com/llucasmendes/dcdlean-arch-go/internal/infra/database"
 	"github.com/llucasmendes/dcdlean-arch-go/internal/infra/graph"
 	"github.com/llucasmendes/dcdlean-arch-go/internal/infra/grpc/pb"
 	"github.com/llucasmendes/dcdlean-arch-go/internal/infra/grpc/service"
-	"github.com/llucasmendes/dcdlean-arch-go/internal/infra/web"
-	server "github.com/llucasmendes/dcdlean-arch-go/internal/infra/web/webserver"
+	"github.com/llucasmendes/dcdlean-arch-go/internal/infra/web/webserver"
 	"github.com/llucasmendes/dcdlean-arch-go/pkg/events"
 	"github.com/streadway/amqp"
 	"google.golang.org/grpc"
@@ -41,40 +38,22 @@ func main() {
 	rabbitMQChannel := getRabbitMQChannel()
 
 	eventDispatcher := events.NewEventDispatcher()
-	eventDispatcher.Register("OrderCreated", &handler.ActionEventHandler{
+	eventDispatcher.Register("OrderCreated", &handler.OrderCreatedHandler{
 		RabbitMQChannel: rabbitMQChannel,
 	})
 
 	createOrderUseCase := NewCreateOrderUseCase(db, eventDispatcher)
-	// listOrderUsecase := NewListOrderUseCase(db, eventDispatcher)
+	listOrdersUseCase := NewListOrdersUseCase(db)
 
-	webserver := server.NewWebServer(configs.WebServerPort)
-
-	orderRepository := database.NewOrderRepository(db)
-	orderCreatedEvent := event.NewOrderCreatedActionEvent()
-
-	createOrderHandler := web.NewWebCreateOrderHandler(eventDispatcher, orderRepository, orderCreatedEvent)
-	listOrderHandler := web.NewWebListOrderHandler(orderRepository)
-
-	webHandler := server.NewHandlerMethod(
-		"/order",
-		"POST",
-		createOrderHandler.Create,
-	)
-
-	listOrderwebHandler := server.NewHandlerMethod(
-		"/order",
-		"GET",
-		listOrderHandler.List,
-	)
-
-	webserver.AddHandler(*webHandler)
-	webserver.AddHandler(*listOrderwebHandler)
+	webserver := webserver.NewWebServer(configs.WebServerPort)
+	webOrderHandler := NewWebOrderHandler(db, eventDispatcher)
+	webserver.AddHandler(http.MethodPost, "/order", webOrderHandler.Create)
+	webserver.AddHandler(http.MethodGet, "/order", webOrderHandler.FindAll)
 	fmt.Println("Starting web server on port", configs.WebServerPort)
 	go webserver.Start()
 
 	grpcServer := grpc.NewServer()
-	createOrderService := service.NewOrderService(*createOrderUseCase)
+	createOrderService := service.NewOrderService(*createOrderUseCase, *listOrdersUseCase)
 	pb.RegisterOrderServiceServer(grpcServer, createOrderService)
 	reflection.Register(grpcServer)
 
@@ -87,6 +66,7 @@ func main() {
 
 	srv := graphql_handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{
 		CreateOrderUseCase: *createOrderUseCase,
+		ListOrdersUsecase:  *listOrdersUseCase,
 	}}))
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)

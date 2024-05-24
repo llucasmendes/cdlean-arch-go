@@ -12,6 +12,7 @@ import (
 	"github.com/llucasmendes/dcdlean-arch-go/internal/entity"
 	"github.com/llucasmendes/dcdlean-arch-go/internal/event"
 	"github.com/llucasmendes/dcdlean-arch-go/internal/infra/database"
+	"github.com/llucasmendes/dcdlean-arch-go/internal/infra/web"
 	"github.com/llucasmendes/dcdlean-arch-go/internal/usecase"
 	"github.com/llucasmendes/dcdlean-arch-go/pkg/events"
 )
@@ -22,21 +23,30 @@ import (
 
 // Injectors from wire.go:
 
-func NewListOrderUseCase(db *sql.DB) *usecase.ListOrderUseCase {
-	orderRepository := database.NewOrderRepository(db)
-	listOrderUseCase := usecase.NewListOrderUseCase(orderRepository)
-	return listOrderUseCase
-}
-
 func NewCreateOrderUseCase(db *sql.DB, eventDispatcher events.EventDispatcherInterface) *usecase.CreateOrderUseCase {
 	orderRepository := database.NewOrderRepository(db)
-	actionEvent := event.NewOrderCreatedActionEvent()
-	createOrderUseCase := usecase.NewCreateOrderUseCase(orderRepository, actionEvent, eventDispatcher)
+	orderCreated := event.NewOrderCreated()
+	createOrderUseCase := usecase.NewCreateOrderUseCase(orderRepository, orderCreated, eventDispatcher)
 	return createOrderUseCase
+}
+
+func NewListOrdersUseCase(db *sql.DB) *usecase.ListOrdersUseCase {
+	orderRepository := database.NewOrderRepository(db)
+	listOrdersUseCase := usecase.NewListOrdersUseCase(orderRepository)
+	return listOrdersUseCase
+}
+
+func NewWebOrderHandler(db *sql.DB, eventDispatcher events.EventDispatcherInterface) *web.WebOrderHandler {
+	orderRepository := database.NewOrderRepository(db)
+	orderCreated := event.NewOrderCreated()
+	webOrderHandler := web.NewWebOrderHandler(eventDispatcher, orderRepository, orderCreated)
+	return webOrderHandler
 }
 
 // wire.go:
 
 var setOrderRepositoryDependency = wire.NewSet(database.NewOrderRepository, wire.Bind(new(entity.OrderRepositoryInterface), new(*database.OrderRepository)))
 
-var setActionEvent = wire.NewSet(event.NewOrderCreatedActionEvent, wire.Bind(new(events.EventInterface), new(*event.ActionEvent)))
+var setEventDispatcherDependency = wire.NewSet(events.NewEventDispatcher, event.NewOrderCreated, wire.Bind(new(events.EventInterface), new(*event.OrderCreated)), wire.Bind(new(events.EventDispatcherInterface), new(*events.EventDispatcher)))
+
+var setOrderCreatedEvent = wire.NewSet(event.NewOrderCreated, wire.Bind(new(events.EventInterface), new(*event.OrderCreated)))

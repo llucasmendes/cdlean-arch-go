@@ -30,7 +30,25 @@ func (r *mutationResolver) CreateOrder(ctx context.Context, input *model.OrderIn
 	}, nil
 }
 
+// Categories is the resolver for the categories field.
+func (r *queryResolver) ListOrders(ctx context.Context) ([]*model.Order, error) {
+	orders, err := r.ListOrdersUsecase.Execute()
+	if err != nil {
+		return nil, err
+	}
+
+	output := make([]*model.Order, len(orders))
+	for i, order := range orders {
+		output[i] = &model.Order{ID: order.ID, Price: order.Price, Tax: order.Tax, FinalPrice: order.FinalPrice}
+	}
+	return output, nil
+}
+
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
+// Query returns QueryResolver implementation.
+func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
+
 type mutationResolver struct{ *Resolver }
+type queryResolver struct{ *Resolver }
