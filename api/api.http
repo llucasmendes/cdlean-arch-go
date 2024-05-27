@@ -1,0 +1,11 @@
+### Criar um novo pedido
+POST http://localhost:8080/orders
+Content-Type: application/json
+
+{
+  "name": "Order 1",
+  "quantity": 10
+}
+
+### Listar todos os pedidos
+GET http://localhost:8080/orders

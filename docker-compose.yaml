@@ -11,6 +11,8 @@ services:
       MYSQL_PASSWORD: root
     ports:
       - 3306:3306
+    volumes:
+      - ./migrations:/docker-entrypoint-initdb.d
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
